@@ -41,7 +41,9 @@ module Jekyll
           'total_additions' => lines.inject(0) { |sum, h| sum += h['additions'] },
           'total_subtractions' => lines.inject(0) { |sum, h| sum += h['subtractions'] },
           'first_commit' => commit(lines.last['sha']),
-          'last_commit' => commit(lines.first['sha'])
+          'last_commit' => commit(lines.first['sha']),
+          'head_tag' => tag_info,
+          'commit_tag' => tag_info(lines.first['sha'])
         }
       end
 
@@ -87,6 +89,10 @@ module Jekyll
           'message' => message.gsub(/    /, ''),
           'changed_files' => changed_files.split("\n")
         }
+      end
+
+      def tag_info(sha = nil)
+        %x{ git describe --tags --always #{sha} }
       end
 
       def tracked_files
